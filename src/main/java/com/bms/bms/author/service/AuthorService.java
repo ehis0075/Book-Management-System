@@ -18,5 +18,7 @@ public interface AuthorService {
 
     Author getAuthorById(Long authorId);
 
+    AuthorDTO getAuthorByAuthorName(String authorName);
+
     AuthorListDTO searchAuthor(AuthorSearchRequestDTO requestDTO);
 }

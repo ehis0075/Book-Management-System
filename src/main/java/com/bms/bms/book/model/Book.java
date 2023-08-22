@@ -4,8 +4,6 @@ import com.bms.bms.author.model.Author;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.List;
-
 @Entity
 @Data
 public class Book {
@@ -16,8 +14,9 @@ public class Book {
 
     private String title;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    private List<Author> author;
+    @ManyToOne
+    private Author author;
 
     private String publicationYear;
+
 }

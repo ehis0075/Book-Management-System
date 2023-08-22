@@ -2,8 +2,10 @@ package com.bms.bms.customSearch.implementation;
 
 
 import com.bms.bms.author.model.Author;
+import com.bms.bms.book.model.Book;
 import com.bms.bms.customSearch.CustomSearchService;
 import com.bms.bms.customSearch.dto.AuthorSearchRequestDTO;
+import com.bms.bms.customSearch.dto.BookSearchRequestDTO;
 import com.bms.bms.util.GeneralUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -44,16 +46,38 @@ public class CustomSearchServiceImpl implements CustomSearchService {
         List<Predicate> predicates = new ArrayList<>();
 
         if (valid(searchMultipleDto.getName())) {
-            predicates.add(cb.like(cb.lower(root.get("name")), '%' + searchMultipleDto.getName().toLowerCase(Locale.ROOT) + '%'));
+            predicates.add(cb.equal(root.get("name"), searchMultipleDto.getName()));
         }
 
         if (valid(searchMultipleDto.getEmail())) {
-            predicates.add(cb.like(cb.lower(root.get("email")), '%' + searchMultipleDto.getEmail().toLowerCase(Locale.ROOT) + '%'));
+            predicates.add(cb.equal(root.get("email"), searchMultipleDto.getEmail()));
         }
+
         TypedQuery<?> query = em.createQuery(cq);
 
 
         return (Page<Author>) getPage(searchMultipleDto.getPage(), searchMultipleDto.getSize(), query);
+    }
+
+    @Override
+    public Page<Book> searchBook(BookSearchRequestDTO searchMultipleDto) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Book> cq = cb.createQuery(Book.class);
+
+        Root<Book> root = cq.from(Book.class);
+        List<Predicate> predicates = new ArrayList<>();
+
+        if (valid(searchMultipleDto.getTitle())) {
+            predicates.add(cb.like(cb.lower(root.get("title")), '%' + searchMultipleDto.getTitle().toLowerCase(Locale.ROOT) + '%'));
+        }
+
+        if (valid(searchMultipleDto.getAuthorName())) {
+            predicates.add(cb.like(cb.lower(root.get("authorName")), '%' + searchMultipleDto.getAuthorName().toLowerCase(Locale.ROOT) + '%'));
+        }
+
+        TypedQuery<?> query = em.createQuery(cq);
+
+        return (Page<Book>) getPage(searchMultipleDto.getPage(), searchMultipleDto.getSize(), query);
     }
 
     private PageImpl<?> getPage(int page, int size, TypedQuery<?> query) {

@@ -78,16 +78,6 @@ public class AuthorServiceImpl implements AuthorService {
             throw new GeneralException(ResponseCodeAndMessage.INCOMPLETE_PARAMETERS_91.responseCode, "Author Id cannot be null or empty!");
         }
 
-        //check for null values
-        if (GeneralUtil.stringIsNullOrEmpty(requestDto.getEmail())) {
-            throw new GeneralException(ResponseCodeAndMessage.INCOMPLETE_PARAMETERS_91.responseCode, "Email cannot be null or empty!");
-        }
-
-        //check for null values
-        if (GeneralUtil.stringIsNullOrEmpty(requestDto.getName())) {
-            throw new GeneralException(ResponseCodeAndMessage.INCOMPLETE_PARAMETERS_91.responseCode, "Author Name cannot be null or empty!");
-        }
-
         // validate email and does not exist
         boolean isExist = authorRepository.existsByEmailAndName(requestDto.getEmail(), requestDto.getName());
 
@@ -138,9 +128,14 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public AuthorDTO getAuthorDTO(Author author) {
+        log.info("Getting author DTO");
 
         AuthorDTO authorDTO = new AuthorDTO();
-        generalService.createDTOFromModel(author, authorDTO);
+        authorDTO.setId(authorDTO.getId());
+        authorDTO.setName(author.getName());
+        authorDTO.setEmail(author.getEmail());
+
+        log.info("author dto {}", authorDTO);
 
         return authorDTO;
     }
@@ -157,8 +152,21 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
+    public AuthorDTO getAuthorByAuthorName(String authorName) {
+        log.info("Request to get author with name {}", authorName);
+
+        if (GeneralUtil.stringIsNullOrEmpty(authorName)) {
+            throw new GeneralException(ResponseCodeAndMessage.INCOMPLETE_PARAMETERS_91.responseCode, "Author Name cannot be empty!");
+        }
+
+        Author author = authorRepository.findByName(authorName);
+
+        return getAuthorDTO(author);
+    }
+
+    @Override
     public AuthorListDTO searchAuthor(AuthorSearchRequestDTO requestDTO) {
-        log.info("Search Audit List {}", requestDTO);
+        log.info("Searching Author List with {}", requestDTO);
 
         Page<Author> auditLogPage = customSearchService.searchAuthor(requestDTO);
 

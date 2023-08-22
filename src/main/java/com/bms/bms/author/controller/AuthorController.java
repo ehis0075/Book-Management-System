@@ -5,6 +5,7 @@ import com.bms.bms.author.dto.AuthorDTO;
 import com.bms.bms.author.dto.AuthorListDTO;
 import com.bms.bms.author.dto.AuthorRequestDTO;
 import com.bms.bms.author.dto.CreateUpdateAuthorDTO;
+import com.bms.bms.author.model.Author;
 import com.bms.bms.author.service.AuthorService;
 import com.bms.bms.customSearch.dto.AuthorSearchRequestDTO;
 import com.bms.bms.general.dto.Response;
@@ -44,6 +45,13 @@ public class AuthorController {
 
         authorService.deleteAuthor(authorId);
         return generalService.prepareResponse(ResponseCodeAndMessage.SUCCESSFUL_0, "");
+    }
+
+    @PostMapping("/get/{authorId}")
+    public Response getOne(@PathVariable Long authorId) {
+
+        Author author = authorService.getAuthorById(authorId);
+        return generalService.prepareResponse(ResponseCodeAndMessage.SUCCESSFUL_0, author);
     }
 
     @PostMapping()
