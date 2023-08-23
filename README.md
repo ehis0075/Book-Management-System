@@ -103,3 +103,11 @@ This API get all books from the db, it requires providing a `page` and  `size`.
 ## Note 
 
 **For pagination: the first page is page 0 and the size is between 1-100, if you want the 101 item on the list, go to page 1.
+
+
+##    To connect to the H2 database 
+paste this url on your browser `http://localhost:8080/h2-console` 
+
+**db-url :** jdbc:h2:mem:testdb
+**username :** sa
+**password :** sa123
