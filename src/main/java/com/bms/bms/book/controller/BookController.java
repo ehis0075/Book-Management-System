@@ -55,6 +55,13 @@ public class BookController {
         return generalService.prepareResponse(ResponseCodeAndMessage.SUCCESSFUL_0, data);
     }
 
+    @PostMapping("/getBookList/{authorId}")
+    public Response getBookListForOneAuthor(@PathVariable Long authorId, @RequestBody BookRequestDTO requestDTO) {
+
+        BookListDTO data = bookService.getBookListForOneAuthor(authorId, requestDTO);
+        return generalService.prepareResponse(ResponseCodeAndMessage.SUCCESSFUL_0, data);
+    }
+
     @PostMapping()
     public Response getAll(@RequestBody BookRequestDTO requestDTO) {
         BookListDTO data = bookService.getBookList(requestDTO);

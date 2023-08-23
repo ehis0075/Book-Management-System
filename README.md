@@ -33,8 +33,6 @@ docker run -p 8080:8080 book-mgt-service-docker:latest
 The API service will be available at http://localhost:8080/api/v1
 
 
-
-
                                 # AUTHOR Endpoints
 ## Create Author API
 
@@ -66,8 +64,6 @@ This API delete author, it requires providing a `authorId` as the path variable
 **Method:** `POST`
 
 This API get all authors from the db, it requires providing a `page` and  `size`.
-
-
 
 
 

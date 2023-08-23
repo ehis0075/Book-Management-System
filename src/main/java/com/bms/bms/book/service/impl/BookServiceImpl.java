@@ -91,6 +91,18 @@ public class BookServiceImpl implements BookService {
             throw new GeneralException(ResponseCodeAndMessage.INCOMPLETE_PARAMETERS_91.responseCode, "Book Id cannot be null or empty!");
         }
 
+        if (GeneralUtil.stringIsNullOrEmpty(requestDto.getTitle())) {
+            throw new GeneralException(ResponseCodeAndMessage.INCOMPLETE_PARAMETERS_91.responseCode, "Book Title cannot be null or empty!");
+        }
+
+        if (Objects.isNull(requestDto.getAuthorId())) {
+            throw new GeneralException(ResponseCodeAndMessage.INCOMPLETE_PARAMETERS_91.responseCode, "Author Id cannot be null or empty!");
+        }
+
+        if (Objects.isNull(requestDto.getPublicationYear())) {
+            throw new GeneralException(ResponseCodeAndMessage.INCOMPLETE_PARAMETERS_91.responseCode, "Publication Year cannot be null or empty!");
+        }
+
         // validate that title does not exit
         boolean isExist = bookRepository.existsByTitle(requestDto.getTitle());
 
@@ -127,17 +139,52 @@ public class BookServiceImpl implements BookService {
         log.info("Getting Book List");
 
         Pageable paged = generalService.getPageableObject(requestDTO.getSize(), requestDTO.getPage());
-        Page<Book> superUserPage = bookRepository.findAll(paged);
+        Page<Book> bookPage = bookRepository.findAll(paged);
 
         BookListDTO bookListDTO = new BookListDTO();
 
-        List<Book> authorList = superUserPage.getContent();
-        if (superUserPage.getContent().size() > 0) {
-            bookListDTO.setHasNextRecord(superUserPage.hasNext());
-            bookListDTO.setTotalCount((int) superUserPage.getTotalElements());
+        List<Book> bookList = bookPage.getContent();
+        if (bookPage.getContent().size() > 0) {
+            bookListDTO.setHasNextRecord(bookPage.hasNext());
+            bookListDTO.setTotalCount((int) bookPage.getTotalElements());
         }
 
-        List<BookDTO> bookDTOS = convertToBookDTOList(authorList);
+        List<BookDTO> bookDTOS = convertToBookDTOList(bookList);
+        bookListDTO.setBookDTOList(bookDTOS);
+
+        return bookListDTO;
+    }
+
+    @Override
+    public BookListDTO getBookListForOneAuthor(Long authorId, BookRequestDTO requestDTO) {
+        log.info("Request to get Book List for author with Id {} and payload {}", authorId, requestDTO);
+
+        if (Objects.isNull(authorId)) {
+            throw new GeneralException(ResponseCodeAndMessage.INCOMPLETE_PARAMETERS_91.responseCode, "Author Id cannot be null or empty!");
+        }
+
+        boolean isExist = authorService.isExistById(authorId);
+
+        if(!isExist){
+            throw new GeneralException(ResponseCodeAndMessage.RECORD_NOT_FOUND_88.responseCode, "Author does not exist!");
+
+        }
+
+        // get the page and size
+        Pageable paged = generalService.getPageableObject(requestDTO.getSize(), requestDTO.getPage());
+
+        Page<Book> bookPage = bookRepository.findAllByAuthor_Id(authorId, paged);
+
+        BookListDTO bookListDTO = new BookListDTO();
+
+        List<Book> bookList = bookPage.getContent();
+        if (bookPage.getContent().size() > 0) {
+            bookListDTO.setHasNextRecord(bookPage.hasNext());
+            bookListDTO.setTotalCount((int) bookPage.getTotalElements());
+        }
+
+        // convert Book DTO to Book List
+        List<BookDTO> bookDTOS = convertToBookDTOList(bookList);
         bookListDTO.setBookDTOList(bookDTOS);
 
         return bookListDTO;

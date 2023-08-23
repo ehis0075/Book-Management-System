@@ -18,6 +18,8 @@ public interface AuthorService {
 
     Author getAuthorById(Long authorId);
 
+    boolean isExistById(Long authorId);
+
     AuthorDTO getAuthorByAuthorName(String authorName);
 
     AuthorListDTO searchAuthor(AuthorSearchRequestDTO requestDTO);

@@ -74,8 +74,18 @@ public class AuthorServiceImpl implements AuthorService {
     public AuthorDTO updateAuthor(Long authorId, CreateUpdateAuthorDTO requestDto) {
         log.info("Request to update author with id {} and payload {}", authorId, requestDto);
 
-        if (authorId == null) {
+        if (Objects.isNull(authorId)) {
             throw new GeneralException(ResponseCodeAndMessage.INCOMPLETE_PARAMETERS_91.responseCode, "Author Id cannot be null or empty!");
+        }
+
+        //check for null values
+        if (GeneralUtil.stringIsNullOrEmpty(requestDto.getEmail())) {
+            throw new GeneralException(ResponseCodeAndMessage.INCOMPLETE_PARAMETERS_91.responseCode, "Email cannot be null or empty!");
+        }
+
+        //check for null values
+        if (GeneralUtil.stringIsNullOrEmpty(requestDto.getName())) {
+            throw new GeneralException(ResponseCodeAndMessage.INCOMPLETE_PARAMETERS_91.responseCode, "Author Name cannot be null or empty!");
         }
 
         // validate email and does not exist
@@ -150,6 +160,18 @@ public class AuthorServiceImpl implements AuthorService {
 
         return authorRepository.findById(authorId).orElseThrow(() -> new GeneralException(ResponseCodeAndMessage.RECORD_NOT_FOUND_88.responseCode, "Author does not exist"));
     }
+
+    @Override
+    public boolean isExistById(Long authorId) {
+        log.info("Request to get author with id {}", authorId);
+
+        if (Objects.isNull(authorId)) {
+            throw new GeneralException(ResponseCodeAndMessage.INCOMPLETE_PARAMETERS_91.responseCode, "Author id cannot be empty!");
+        }
+
+        return authorRepository.existsById(authorId);
+    }
+
 
     @Override
     public AuthorDTO getAuthorByAuthorName(String authorName) {
