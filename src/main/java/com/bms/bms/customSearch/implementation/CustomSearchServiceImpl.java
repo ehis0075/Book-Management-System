@@ -45,12 +45,12 @@ public class CustomSearchServiceImpl implements CustomSearchService {
         Root<Author> root = cq.from(Author.class);
         List<Predicate> predicates = new ArrayList<>();
 
-        if (valid(searchMultipleDto.getName())) {
-            predicates.add(cb.equal(root.get("name"), searchMultipleDto.getName()));
+        if (valid(searchMultipleDto.getEmail())) {
+            predicates.add(cb.like(cb.lower(root.get("email")), '%' + searchMultipleDto.getEmail().toLowerCase(Locale.ROOT) + '%'));
         }
 
-        if (valid(searchMultipleDto.getEmail())) {
-            predicates.add(cb.equal(root.get("email"), searchMultipleDto.getEmail()));
+        if (valid(searchMultipleDto.getName())) {
+            predicates.add(cb.like(cb.lower(root.get("name")), '%' + searchMultipleDto.getName().toLowerCase(Locale.ROOT) + '%'));
         }
 
         TypedQuery<?> query = em.createQuery(cq);
